@@ -4,6 +4,7 @@ import {ContentType} from "../../types";
 import axiosApi from "../../axiosApi";
 import {AxiosError} from "axios";
 import Preloader from "../../components/Preloder/Preloader";
+import "./ContentContainer.css";
 
 const ContentContainer = () => {
   const [content, setContent] = useState<ContentType | null>(null);
@@ -26,9 +27,9 @@ const ContentContainer = () => {
   }, [location, fetchContent]);
 
   let contentLoader = (
-    <div>
+    <div className="contentBox">
       <div>
-        <h1>{content?.title.toUpperCase()}</h1>
+        <h1 className="contentH1">{content?.title.toUpperCase()}</h1>
       </div>
       <div>
         <p>{content?.content}</p>
@@ -41,7 +42,7 @@ const ContentContainer = () => {
   }
 
   return (
-    <div>
+    <div className="mainContentBox">
       {contentLoader}
     </div>
   );

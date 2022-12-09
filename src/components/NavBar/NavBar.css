@@ -1,5 +1,70 @@
-.navBar{
+.navBar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
+    padding: 30px 20px 30px 20px;
+    background: rgb(255,255,255);
+    background: linear-gradient(132deg, rgba(255,255,255,1) 0%, rgba(134,255,232,1) 35%, rgba(0,223,255,1) 100%);
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
+
+.linkBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 70%;
+}
+
+.btnBox {
+    position: relative;
+}
+
+.logo {
+    text-decoration: none;
+    font-size: 50px;
+    color: #65abf8;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.linkPage {
+    text-decoration: none;
+    color: #000000;
+    font-size: 20px;
+    margin: 5px;
+}
+
+.active{
+    background: rgba(23, 167, 196, 0.87);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.btnEditAdd {
+    background: #2ffcc9;
+    border: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px;
+    width: 150px;
+}
+
+.btnEditAdd:active {
+    background: #00ccff;
+}
+
+.addEditBox {
+    position: absolute;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 150px;
+    height: 40px;
+    background: #2ffcc9;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+

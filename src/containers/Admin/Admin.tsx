@@ -3,8 +3,9 @@ import "./Admin.css";
 import {ContentType} from "../../types";
 import axiosApi from "../../axiosApi";
 import {AxiosError} from "axios";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import Preloader from "../../components/Preloder/Preloader";
+import slugify from "react-slugify";
 
 const Admin = () => {
   const [admin, setAdmin] = useState<ContentType>({
@@ -12,11 +13,13 @@ const Admin = () => {
     title: '',
   });
   const [category, setCategory] = useState<string>('');
+  const [pagesList, setPagesList] = useState<string[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
 
   const navigate = useNavigate();
+  const {editAdd} = useParams();
 
-  const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
     setCategory(e.target.value);
   }
 
@@ -28,10 +31,15 @@ const Admin = () => {
   const formSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axiosApi.put("/pages/" + category + ".json", admin);
-      navigate("/pages/" + category);
+      if (editAdd === 'edit') {
+        await axiosApi.put("/pages/" + category + ".json", admin);
+        navigate("/pages/" + category);
+      } else {
+        await axiosApi.put("/pages/" + category + ".json", admin);
+        navigate("/pages/" + category);
+      }
     } catch (e) {
-      console.log('error',e);
+      console.log('error', e);
     }
   }
 
@@ -46,30 +54,94 @@ const Admin = () => {
   }, []);
 
   useEffect(() => {
-    if (category.length) {
-      fetchCategoryData(category).catch((e: AxiosError) => (console.log(e.message)));
+    if (editAdd === 'edit') {
+      if (category.length) {
+        fetchCategoryData(category).catch((e: AxiosError) => (console.log(e.message)));
+      }
     }
-  }, [category, fetchCategoryData]);
+  }, [category, editAdd, fetchCategoryData]);
+
+  const fetchOptions = useCallback(async () => {
+    setLoader(true);
+    try {
+      const pageListResponse = await axiosApi.get("/pages.json");
+      const pages = Object.keys(pageListResponse.data).map(key => {
+        return key;
+      });
+      setPagesList(pages);
+    } finally {
+      setLoader(false);
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchOptions().catch(console.error);
+  }, [fetchOptions]);
+
+  useEffect(() => {
+    if (editAdd === "add") {
+      setAdmin({content: '', title: '',});
+      setCategory('');
+    }
+  }, [editAdd]);
 
   let content = (
-    <div>
+    <div className="addEditBigBox">
       <form className="formBox" onSubmit={formSubmit}>
         <div className="inputBox">
-          <select required className="adminSelect" name="category" id="category" value={category} onChange={onChangeSelect}>
-            <option hidden value="">Select?</option>
-            <option value="home">Home</option>
-            <option value="about">About</option>
-            <option value="contacts">Contacts</option>
-            <option value="division">Division</option>
-          </select>
+          {editAdd === 'edit' ?
+            <div>
+              <p style={{marginTop: "0"}}>Edit Page</p>
+              <select
+                required
+                className="adminSelect"
+                name="category"
+                id="category"
+                value={category}
+                onChange={onChangeSelect}
+              >
+                <option hidden value="">Select?</option>
+                {pagesList.map(item => {
+                  return <option value={item} key={Math.random()}>{item}</option>
+                })}
+              </select>
+            </div>
+            :
+            <div>
+              <p style={{marginTop: "0"}}>Add Page</p>
+              <input
+                required
+                onChange={onChangeSelect}
+                value={slugify(category)}
+                type="text"
+                name="category"
+              />
+            </div>
+          }
         </div>
         <div className="inputBox">
-          <input required className="adminTitle" name="title" type="text" onChange={onChangeInputTextarea} value={admin.title}/>
+          <p style={{marginTop: "0"}}>Title:</p>
+          <input
+            required
+            className="adminTitle"
+            name="title"
+            type="text"
+            onChange={onChangeInputTextarea}
+            value={admin.title}
+          />
         </div>
         <div className="inputBox">
-          <textarea required className="adminText" name="content" id="sd" onChange={onChangeInputTextarea} value={admin.content}/>
+          <p style={{marginTop: "0"}}>Content:</p>
+          <textarea
+            required
+            className="adminText"
+            name="content"
+            id="sd"
+            onChange={onChangeInputTextarea}
+            value={admin.content}
+          />
         </div>
-        <button type="submit">add</button>
+        <button className="btnSubmit" type="submit">Submit</button>
       </form>
     </div>
 
@@ -81,7 +153,7 @@ const Admin = () => {
 
   return (
     <div>
-      <h1>Admin</h1>
+      <h1 style={{textAlign: 'center'}}>Admin</h1>
       {content}
     </div>
   );
