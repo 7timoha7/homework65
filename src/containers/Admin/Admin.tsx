@@ -80,7 +80,11 @@ const Admin = () => {
 
   useEffect(() => {
     if (editAdd === "add") {
-      setAdmin({content: '', title: '',});
+      setAdmin(prevState => ({
+        ...prevState,
+        title:'',
+        content:'',
+      }));
       setCategory('');
     }
   }, [editAdd]);
