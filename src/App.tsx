@@ -6,7 +6,7 @@ import ContentContainer from "./containers/ContentContainer/ContentContainer";
 import Admin from "./containers/Admin/Admin";
 
 function App() {
-
+console.log('123')
   const welcome = (
     <div className="welcome">
       <h1 style={{textAlign: "center"}}>Welcome</h1>
